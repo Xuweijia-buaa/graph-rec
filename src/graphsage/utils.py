@@ -15,6 +15,8 @@ class DotPredictor(nn.Module):
     '''
     Dot Predictor of Edges,
 
+    向量内积，计算link（pair）中，边uv的分数
+
     Source:
     https://docs.dgl.ai/en/latest/new-tutorial/4_link_predict.html
     '''
@@ -32,7 +34,7 @@ class DotPredictor(nn.Module):
 def parse(path):
   g = gzip.open(path, 'rb')
   for l in g:
-    yield eval(l)
+    yield eval(l)   # 每行item记录。是一个json,eval成dict
 
 #To pd DataFrame
 def getDF(path):
@@ -41,7 +43,9 @@ def getDF(path):
   for d in parse(path):
     df[i] = d
     i += 1
-  return pd.DataFrame.from_dict(df, orient='index')
+    if i==100:  # test.只取20条item看看
+        break
+  return pd.DataFrame.from_dict(df, orient='index') # 转成item_df。每个item对应一条记录
 
 #TF-IDF Vectorizer
 def tfidf(corpus):
